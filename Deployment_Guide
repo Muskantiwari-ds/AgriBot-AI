@@ -1,0 +1,56 @@
+# AgriBot AI - Deployment Guide
+
+## Quick Start (Development)
+
+### Prerequisites
+- Python 3.8+
+- Node.js 16+
+- PostgreSQL 12+
+- Redis 6+
+- Git
+
+### 1. Clone and Setup
+
+```bash
+# Clone repository
+git clone <your-repo-url>
+cd agribot-ai
+
+# Copy environment file
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+### 2. Backend Setup
+
+```bash
+cd backend
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Setup database
+# Make sure PostgreSQL is running
+createdb agribot
+
+# Run migrations
+alembic upgrade head
+
+# Start backend
+uvicorn main:app --reload
+```
+
+### 3. Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start

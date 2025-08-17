@@ -1,58 +1,40 @@
-# ---- Build stage: create wheels for faster, smaller runtime installs
-FROM python:3.10-slim AS builder
+# Use Python 3.11 slim image
+FROM python:3.11-slim
 
-ENV PIP_NO_CACHE_DIR=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-WORKDIR /wheels
-
-# System deps for building some Python packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential gcc \
- && rm -rf /var/lib/apt/lists/*
-
-# Copy and build wheels
-COPY requirements.txt .
-RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
-
-# ---- Runtime stage
-FROM python:3.10-slim
-
-ENV PIP_NO_CACHE_DIR=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    UVICORN_WORKERS=2 \
-    HOST=0.0.0.0 \
-    PORT=8000
-
-# Create non-root user
-RUN useradd -m appuser
-
+# Set working directory
 WORKDIR /app
 
-# Minimal runtime deps (if any native libs are needed, add here)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
- && rm -rf /var/lib/apt/lists/*
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    curl \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy wheels from builder and install
-COPY --from=builder /wheels /wheels
+# Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir --find-links=/wheels -r requirements.txt && rm -rf /wheels
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
 
-# Permissions
-RUN chown -R appuser:appuser /app
-USER appuser
+# Create directories for data and uploads
+RUN mkdir -p data uploads logs
 
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Expose port
 EXPOSE 8000
 
-# Optional: healthcheck (FastAPI /docs implies server is up)
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{int(__import__(\"os\").environ.get(\"PORT\",8000))}/docs').read()" || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Command (adjust module path if your entrypoint differs)
-CMD ["uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+# Run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroAI Advisor - कृषि सलाहकार</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="#" id="brand-link">
+                <i class="fas fa-seedling me-2"></i>
+                <span id="brand-text">AgroAI सलाहकार</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <select class="form-select form-select-sm" id="languageSelect">
+                            <option value="hi">हिंदी</option>
+                            <option value="en">English</option>
+                            <option value="ta">தமிழ்</option>
+                            <option value="te">తెలుగు</option>
+                            <option value="bn">বাংলা</option>
+                            <option value="gu">ગુજરાતી</option>
+                            <option value="mr">मराठी</option>
+                            <option value="pa">ਪੰਜਾਬੀ</option>
+                        </select>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-outline-light btn-sm" id="voiceToggle">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="sidebar-content">
+                    <h6 class="sidebar-heading" id="quick-help">त्वरित सहायता</h6>
+                    
+                    <div class="quick-options">
+                        <button class="btn btn-outline-success btn-sm w-100 mb-2 quick-question" 
+                                data-question="इस मौसम में कौन सी फसल लगाना सबसे अच्छा होगा?">
+                            <i class="fas fa-leaf"></i> फसल सुझाव
+                        </button>
+                        
+                        <button class="btn btn-outline-primary btn-sm w-100 mb-2 quick-question" 
+                                data-question="आज मौसम कैसा रहेगा?">
+                            <i class="fas fa-cloud-sun"></i> मौसम जानकारी
+                        </button>
+                        
+                        <button class="btn btn-outline-warning btn-sm w-100 mb-2 quick-question" 
+                                data-question="सरकारी योजनाओं की जानकारी दें">
+                            <i class="fas fa-university"></i> सरकारी योजनाएं
+                        </button>
+                        
+                        <button class="btn btn-outline-info btn-sm w-100 mb-2 quick-question" 
+                                data-question="बाजार भाव क्या है?">
+                            <i class="fas fa-chart-line"></i> बाजार भाव
+                        </button>
+                        
+                        <button class="btn btn-outline-danger btn-sm w-100 mb-2 quick-question" 
+                                data-question="कीट और रोगों से कैसे बचाव करें?">
+                            <i class="fas fa-bug"></i> कीट नियंत्रण
+                        </button>
+                    </div>
+
+                    <hr>
+                    
+                    <h6 class="sidebar-heading" id="recent-queries">हाल की पूछताछ</h6>
+                    <div id="recentQueries" class="recent-queries">
+                        <!-- Recent queries will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <!-- Welcome Section -->
+                <div class="welcome-section" id="welcomeSection">
+                    <div class="text-center py-5">
+                        <div class="welcome-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h1 class="display-5 fw-bold text-success mb-3" id="welcome-title">
+                            AgroAI सलाहकार में आपका स्वागत है
+                        </h1>
+                        <p class="lead text-muted mb-4" id="welcome-subtitle">
+                            भारतीय किसानों के लिए AI-संचालित कृषि सलाह मंच
+                        </p>
+                        <div class="row g-4 mt-4">
+                            <div class="col-md-3">
+                                <div class="feature-card">
+                                    <i class="fas fa-robot text-primary"></i>
+                                    <h6 id="feature-1">स्मार्ट सलाह</h6>
+                                    <small class="text-muted" id="feature-1-desc">AI आधारित व्यक्तिगत सुझाव</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="feature-card">
+                                    <i class="fas fa-globe text-success"></i>
+                                    <h6 id="feature-2">बहुभाषी समर्थन</h6>
+                                    <small class="text-muted" id="feature-2-desc">8+ भारतीय भाषाओं में</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="feature-card">
+                                    <i class="fas fa-clock text-warning"></i>
+                                    <h6 id="feature-3">24/7 उपलब्ध</h6>
+                                    <small class="text-muted" id="feature-3-desc">कभी भी, कहीं भी पूछें</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="feature-card">
+                                    <i class="fas fa-shield-alt text-info"></i>
+                                    <h6 id="feature-4">विश्वसनीय</h6>
+                                    <small class="text-muted" id="feature-4-desc">सत्यापित जानकारी</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-container" id="chatContainer" style="display: none;">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Chat messages will appear here -->
+                    </div>
+                </div>
+
+                <!-- Location Setup -->
+                <div class="location-setup" id="locationSetup">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title" id="location-title">
+                                <i class="fas fa-map-marker-alt text-danger"></i>
+                                आपका स्थान बताएं
+                            </h5>
+                            <p class="text-muted" id="location-subtitle">
+                                बेहतर सलाह के लिए कृपया अपना स्थान साझा करें
+                            </p>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="stateSelect" class="form-label" id="state-label">राज्य</label>
+                                    <select class="form-select" id="stateSelect">
+                                        <option value="">राज्य चुनें</option>
+                                        <option value="AP">आंध्र प्रदेश</option>
+                                        <option value="AR">अरुणाचल प्रदेश</option>
+                                        <option value="AS">असम</option>
+                                        <option value="BR">बिहार</option>
+                                        <option value="CG">छत्तीसगढ़</option>
+                                        <option value="GA">गोवा</option>
+                                        <option value="GJ">गुजरात</option>
+                                        <option value="HR">हरियाणा</option>
+                                        <option value="HP">हिमाचल प्रदेश</option>
+                                        <option value="JH">झारखंड</option>
+                                        <option value="KA" selected>कर्नाटक</option>
+                                        <option value="KL">केरल</option>
+                                        <option value="MP">मध्य प्रदेश</option>
+                                        <option value="MH">महाराष्ट्र</option>
+                                        <option value="MN">मणिपुर</option>
+                                        <option value="ML">मेघालय</option>
+                                        <option value="MZ">मिजोरम</option>
+                                        <option value="NL">नागालैंड</option>
+                                        <option value="OR">ओडिशा</option>
+                                        <option value="PB">पंजाब</option>
+                                        <option value="RJ">राजस्थान</option>
+                                        <option value="SK">सिक्किम</option>
+                                        <option value="TN">तमिलनाडु</option>
+                                        <option value="TS">तेलंगाना</option>
+                                        <option value="TR">त्रिपुरा</option>
+                                        <option value="UP">उत्तर प्रदेश</option>
+                                        <option value="UK">उत्तराखंड</option>
+                                        <option value="WB">पश्चिम बंगाल</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="districtInput" class="form-label" id="district-label">जिला</label>
+                                    <input type="text" class="form-control" id="districtInput" placeholder="जिला का नाम">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="farmSizeInput" class="form-label" id="farm-size-label">खेत का आकार (एकड़)</label>
+                                    <input type="number" class="form-control" id="farmSizeInput" placeholder="एकड़ में">
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button class="btn btn-success" id="saveLocation">
+                                    <i class="fas fa-save"></i> <span id="save-location-text">स्थान सहेजें</span>
+                                </button>
+                                <button class="btn btn-outline-primary ms-2" id="getLocation">
+                                    <i class="fas fa-crosshairs"></i> <span id="detect-location-text">स्वचालित पता लगाएं</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-container">
+                        <div class="input-group">
+                            <textarea class="form-control" 
+                                     id="messageInput" 
+                                     rows="1" 
+                                     placeholder="अपना प्रश्न यहाँ लिखें... (जैसे: इस मौसम में कौन सी फसल लगाऊं?)"
+                                     maxlength="1000"></textarea>
+                            <button class="btn btn-success" type="button" id="sendButton">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" type="button" id="voiceButton">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Voice Recording Indicator -->
+                        <div class="voice-indicator" id="voiceIndicator" style="display: none;">
+                            <div class="voice-animation">
+                                <div class="voice-bar"></div>
+                                <div class="voice-bar"></div>
+                                <div class="voice-bar"></div>
+                                <div class="voice-bar"></div>
+                            </div>
+                            <span id="voice-status">सुन रहा हूँ...</span>
+                            <button class="btn btn-sm btn-outline-danger ms-2" id="stopVoice">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Typing Indicator -->
+                        <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                            <div class="typing-animation">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span id="typing-text">AI सोच रहा है...</span>
+                        </div>
+                        
+                        <!-- Character Count -->
+                        <div class="character-count">
+                            <small class="text-muted">
+                                <span id="charCount">0</span>/1000
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-success mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mb-0" id="loading-text">आपके प्रश्न का उत्तर तैयार कर रहे हैं...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Alert -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="errorToast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong class="me-auto" id="error-title">त्रुटि</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="errorMessage">
+                कुछ गलत हो गया। कृपया पुनः प्रयास करें।
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/voice.js"></script>
+    
+    <script>
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            AgroAI.init();
+        });
+    </script>
+</body>
+</html>

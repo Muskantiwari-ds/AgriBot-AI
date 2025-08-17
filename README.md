@@ -98,24 +98,17 @@ agribot-ai/
 │   │   ├── core/
 │   │   ├── models/
 │   │   ├── services/
-│   │   └── utils/
-│   ├── data/
-│   └── tests/
+│   ├── dockerfile
 ├── frontend/
 │   ├── package.json
-│   ├── public/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
-│   │   ├── services/
+│   │   ├── agents/
 │   │   └── utils/
-│   └── build/
+│   └── dockerfile
 ├── data/
-│   ├── datasets/
-│   ├── processed/
-│   └── scripts/
-├── docs/
-└── deployment/
+└── Deployment_guide
 ```
 
 ## Features in Detail
@@ -149,13 +142,6 @@ agribot-ai/
 ## API Documentation
 
 Once the backend is running, visit `http://localhost:8000/docs` for interactive API documentation.
-
-### Key Endpoints
-
-- `POST /api/v1/query` - Submit agricultural queries
-- `GET /api/v1/weather/{location}` - Get weather information
-- `GET /api/v1/crops/{region}` - Get crop recommendations
-- `POST /api/v1/feedback` - Submit user feedback
 
 ## Data Processing
 
